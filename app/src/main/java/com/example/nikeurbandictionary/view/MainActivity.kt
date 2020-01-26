@@ -10,7 +10,6 @@ import android.view.View
 import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.nikeurbandictionary.model.CustomAdapter
-import com.example.nikeurbandictionary.model.NetworkApi
 import com.example.nikeurbandictionary.R
 import com.example.nikeurbandictionary.model.Network
 import com.example.nikeurbandictionary.model.classes.Definition
@@ -27,6 +26,7 @@ class MainActivity : AppCompatActivity(), ViewContract {
 
     var sort_list: Definition = Definition(emptyList())
     lateinit var presenter: Presenter
+    var search: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +36,21 @@ class MainActivity : AppCompatActivity(), ViewContract {
 
         btn_search.setOnClickListener {
             initNetworkCall()
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putParcelable("list", sort_list)
+    }
+
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
+        super.onRestoreInstanceState(savedInstanceState)
+        sort_list = savedInstanceState?.getParcelable<Definition>("list")!!
+        if(sort_list != Definition(emptyList())){
+            recylerView.adapter = CustomAdapter(sort_list)
+            recylerView.adapter?.notifyDataSetChanged()
         }
     }
 
@@ -109,12 +124,12 @@ class MainActivity : AppCompatActivity(), ViewContract {
         val network = Network.getInstance()
         val api = network.getApi()
 
-        val term: String = et_search.text.toString()
+        search = et_search.text.toString()
 
         progressBar.setVisibility(View.VISIBLE)
         Thread.sleep(1000)
 
-        api.searchWord(term).enqueue(object : Callback<Definition> {
+        api.searchWord(search).enqueue(object : Callback<Definition> {
             override fun onFailure(call: Call<Definition>, t: Throwable) {
                 Toast.makeText(this@MainActivity, "Fail", Toast.LENGTH_LONG).show()
                 Log.d("///////////", t.message)
