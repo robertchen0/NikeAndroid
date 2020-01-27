@@ -50,7 +50,6 @@ class MainActivity : AppCompatActivity(), ViewContract {
         sort_list = savedInstanceState?.getParcelable<Definition>("list")!!
         if(sort_list != Definition(emptyList())){
             recylerView.adapter = CustomAdapter(sort_list)
-            recylerView.adapter?.notifyDataSetChanged()
         }
     }
 
