@@ -126,7 +126,6 @@ class MainActivity : AppCompatActivity(), ViewContract {
         search = et_search.text.toString()
 
         progressBar.setVisibility(View.VISIBLE)
-        Thread.sleep(1000)
 
         api.searchWord(search).enqueue(object : Callback<Definition> {
             override fun onFailure(call: Call<Definition>, t: Throwable) {
